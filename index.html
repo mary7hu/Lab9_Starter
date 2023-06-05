@@ -87,7 +87,28 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({
+      token: "15cea06d07c54570bdc269cae7042afb"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log("Global error: " + error.message + ", line number: " + lineno);
+      return true;
+    };
+
+    class NoNumberError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "NoNumberError";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +116,107 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        if (secondNum == '') {
+          throw new NoNumberError("second number missing");
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+      } finally {
+        output.innerHTML = "can't calculate";
+      }
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    errorBtns[0].addEventListener('click', consoleLog);
+    errorBtns[1].addEventListener('click', consoleError);
+    errorBtns[2].addEventListener('click', consoleCount);
+    errorBtns[3].addEventListener('click', consoleWarn);
+    errorBtns[4].addEventListener('click', consoleAssert);
+    errorBtns[5].addEventListener('click', consoleClear);
+    errorBtns[6].addEventListener('click', consoleDir);
+    errorBtns[7].addEventListener('click', consoleDirxml);
+    errorBtns[8].addEventListener('click', consoleGroupStart);
+    errorBtns[9].addEventListener('click', consoleGroupEnd);
+    errorBtns[10].addEventListener('click', consoleTable);
+    errorBtns[11].addEventListener('click', consoleTimerStart);
+    errorBtns[12].addEventListener('click', consoleTimerEnd);
+    errorBtns[13].addEventListener('click', consoleTrace);
+    errorBtns[14].addEventListener('click', triggerError);
+
+    function consoleLog() {
+      console.log("console log");
+    }
+
+    function consoleError() {
+      console.error("console error");
+    }
+
+    function consoleCount() {
+      console.count("button");
+    }
+
+    function consoleWarn() {
+      console.warn("console warn");
+    }
+
+    function consoleAssert() {
+      console.assert(2 == 4, "console assert");
+    }
+
+    function consoleClear() {
+      console.clear();
+    }
+
+    function consoleDir() {
+      console.dir(document.querySelector('form'));
+    }
+
+    function consoleDirxml() {
+      let someObject = {
+        variable1: "string",
+        variable2: 2
+      };
+      console.dirxml(someObject);
+      console.dirxml(document.querySelector('form'));
+    }
+
+    function consoleGroupStart() {
+      console.group("group name");
+    }
+
+    function consoleGroupEnd() {
+      console.groupEnd("group name");
+    }
+
+    function consoleTable() {
+      console.table(["table1", "table2", "table3"]);
+    }
+
+    function consoleTimerStart() {
+      console.time("timer");
+    }
+
+    function consoleTimerEnd() {
+      console.timeEnd("timer");
+    }
+
+    function consoleTrace() {
+      function test() {
+        console.trace();
+      }
+      test();
+    }
+
+    function triggerError() {
+      throw new Error('Some Error');
+    }
   </script>
 </body>
 
